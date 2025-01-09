@@ -1771,7 +1771,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
                   "2 = Dynamic packet captur              ",
                   RTSH(nrf_wifi_radio_test_rx_cap), 2, 0),
     SHELL_CMD_ARG(tx_tone_freq, NULL,
-                  "<val> - Frequency in the range of -10MHz to 10MHz",
+                  "<val> - Frequency offset with respect to center frequency in the range of -10 MHz to 10 MHz (resolution 1 MHz)",
                   RTSH(nrf_wifi_radio_test_set_tx_tone_freq), 2, 0),
     SHELL_CMD_ARG(tx_tone, NULL,
                   "<TONE CONTROL>\n"
