@@ -18,8 +18,8 @@
 struct shell *shell_global;
 #endif /* CONFIG_ZEPHYR_SHELL */
 
-extern struct nrf70_bm_rt_wifi_drv_priv nrf70_bm_priv;
-struct nrf70_bm_rt_wifi_ctx *ctx = &nrf70_bm_priv.rpu_ctx_bm;
+extern struct nrf70_bm_rt_wifi_drv_priv nrf70_bm_rt_priv;
+struct nrf70_bm_rt_wifi_ctx *ctx = &nrf70_bm_rt_priv.rpu_ctx_bm;
 
 static bool check_test_in_prog() {
   if (ctx->conf_params.rx) {
