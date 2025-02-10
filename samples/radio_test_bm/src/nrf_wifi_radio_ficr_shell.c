@@ -15,8 +15,8 @@
 #include "nrf_wifi_ficr_prog.h"
 #include "common/fmac_api_common.h"
 
-extern struct nrf70_bm_rt_wifi_drv_priv nrf70_bm_priv;
-static struct nrf70_bm_rt_wifi_ctx *ctx = &nrf70_bm_priv.rpu_ctx_bm;
+extern struct nrf70_bm_rt_wifi_drv_priv nrf70_bm_rt_priv;
+static struct nrf70_bm_rt_wifi_ctx *ctx = &nrf70_bm_rt_priv.rpu_ctx_bm;
 
 static void disp_location_status(char *region, unsigned int ret) {
   switch (ret) {
