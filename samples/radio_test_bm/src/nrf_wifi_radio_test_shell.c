@@ -760,6 +760,27 @@ static int nrf_wifi_radio_test_set_rx_capture_length(size_t argc,
   return 0;
 }
 
+static int nrf_wifi_radio_test_set_rx_capture_timeout(size_t argc,
+                                                     const char *argv[]) {
+	char *ptr = NULL;
+	unsigned short int val = 0;
+
+	val = strtoul(argv[1], &ptr, 10);
+
+	if (val > CAPTURE_DURATION_IN_SEC) {
+		RT_SHELL_PRINTF_ERROR("'capture_timeout' has to be less than or equal to %d seconds\n", CAPTURE_DURATION_IN_SEC);
+		return -ENOEXEC;
+	}
+
+	if (!check_test_in_prog()) {
+		return -ENOEXEC;
+	}
+
+	ctx->conf_params.capture_timeout = val;
+
+	return 0;
+}
+
 static int nrf_wifi_radio_test_set_ru_tone(size_t argc, const char *argv[]) {
   char *ptr = NULL;
   unsigned long val = 0;
@@ -1053,6 +1074,14 @@ static int nrf_wifi_radio_test_rx_cap(size_t argc, const char *argv[]) {
     RT_SHELL_PRINTF_ERROR("%s: Invalid rx_capture_length %d\n", __func__,
                           ctx->conf_params.capture_length);
     goto out;
+  }
+
+  if (rx_cap_type == NRF_WIFI_RF_TEST_RX_DYN_PKT_CAP) {
+    if (!ctx->conf_params.capture_timeout) {
+        RT_SHELL_PRINTF_ERROR("%s: Invalid rx_capture_timeout %d\n",__func__,
+                              ctx->conf_params.capture_timeout);
+    goto out;
+    }
   }
 
   if (!check_test_in_prog()) {
@@ -1445,6 +1474,7 @@ static int nrf_wifi_radio_test_show_cfg(size_t argc, const char *argv[]) {
 
   RT_SHELL_PRINTF_INFO("rx_capture_length = %d\n", conf_params->capture_length);
 
+  RT_SHELL_PRINTF_INFO("rx_capture_timeout = %d\n", conf_params->capture_timeout);
 #if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) ||                  \
     defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
   RT_SHELL_PRINTF_INFO("sr_ant_switch_ctrl = %d\n",
@@ -1652,6 +1682,7 @@ DEFINE_CMD_HANDLER(nrf_wifi_radio_test_sr_ant_switch_ctrl)
 DEFINE_CMD_HANDLER(nrf_wifi_radio_test_set_rx_lna_gain)
 DEFINE_CMD_HANDLER(nrf_wifi_radio_test_set_rx_bb_gain)
 DEFINE_CMD_HANDLER(nrf_wifi_radio_test_set_rx_capture_length)
+DEFINE_CMD_HANDLER(nrf_wifi_radio_test_set_rx_capture_timeout)
 DEFINE_CMD_HANDLER(nrf_wifi_radio_test_rx_cap)
 DEFINE_CMD_HANDLER(nrf_wifi_radio_test_set_tx_tone_freq)
 DEFINE_CMD_HANDLER(nrf_wifi_radio_test_tx_tone)
@@ -1790,6 +1821,11 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
                   "<val> - Number of RX samples to be captured\n"
                   "Max allowed length is 16384 complex samples",
                   RTSH(nrf_wifi_radio_test_set_rx_capture_length), 2,
+                  0),
+    SHELL_CMD_ARG(rx_capture_timeout, NULL,
+                  "<val> - Wait time allowed in seconds\n"
+                  "Max timeout allowed is 600 seconds",
+                  RTSH(nrf_wifi_radio_test_set_rx_capture_timeout), 2,
                   0),
     SHELL_CMD_ARG(rx_cap, NULL,
                   "0 = ADC capture\n"
